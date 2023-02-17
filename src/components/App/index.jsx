@@ -1,15 +1,22 @@
+import { Typography } from 'antd'
 import { useEffect, useState } from 'react'
 import { getUser } from '../../data/auth'
 import { getEvents } from '../../data/events'
 import { getMatches } from '../../data/match'
+import { getAllVotes } from '../../data/vote'
 import { Auth } from '../Auth'
+import { Board } from '../Board'
 import { Events } from '../Events'
 import { Matches } from '../Matches'
+
+const { Title } = Typography
 
 export function App() {
   const [events, setEvents] = useState([])
   const [user, setUser] = useState({})
   const [matches, setMatches] = useState([])
+  const [votes, setVotes] = useState([])
+  const activeEvent = 1
 
   async function fetchEvents() {
     const response = await getEvents()
@@ -17,8 +24,13 @@ export function App() {
   }
 
   async function fetchMatches() {
-    const response = await getMatches(1)
+    const response = await getMatches(activeEvent)
     setMatches(response)
+  }
+
+  async function fetchVotes() {
+    const response = await getAllVotes(activeEvent)
+    setVotes(response)
   }
 
   async function fetchUser() {
@@ -29,6 +41,7 @@ export function App() {
   useEffect(() => {
     fetchEvents()
     fetchMatches()
+    fetchVotes()
     fetchUser()
   }, [])
 
@@ -38,6 +51,9 @@ export function App() {
 
       <Events events={events} />
 
+      <Board votes={votes} matches={matches} />
+
+      <Title level={5}>Partidos</Title>
       <Matches matches={matches} />
     </div>
   )
