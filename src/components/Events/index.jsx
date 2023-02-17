@@ -1,10 +1,10 @@
+import { Typography } from 'antd'
+
+const { Title } = Typography
+
 export function Events({ events }) {
-  if (events && events.length == 0) {
-    return <div>No hay eventos activos</div>
-  }
+  const activeEvent = events && events.at(0)
+  const { name } = activeEvent || {}
 
-  const activeEvent = events.at(0)
-  const { id, name } = activeEvent
-
-  return <h1 key={id}> {name} </h1>
+  return <Title level={3}>{name}</Title>
 }

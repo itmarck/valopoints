@@ -1,30 +1,58 @@
-import { List } from 'antd'
+import { List, notification, Popconfirm, Typography } from 'antd'
 import { createVote } from '../../data/vote'
 
-import './Matches.css'
+const { Item } = List
+const { Text } = Typography
 
 export function Matches({ matches }) {
-  async function onTeamClick(team, match) {
-    await createVote(team, match)
-    alert('Voto enviado')
+  return (
+    <List
+      bordered
+      dataSource={matches}
+      renderItem={(props) => <MatchItem {...props} />}
+    />
+  )
+}
+
+function MatchItem({ id, home, away, winner }) {
+  async function onTeamClick(team) {
+    await createVote(team, id)
+
+    notification.open({
+      type: 'success',
+      message: 'Voto enviado',
+      description: `Has votado por ${team}`,
+    })
   }
 
-  function renderItem({ id, home, away, winner }) {
-    const homeClass = winner === home ? 'team winner' : 'team'
-    const awayClass = winner === away ? 'team winner' : 'team'
+  return (
+    <Item>
+      <Team winner={winner} onClick={onTeamClick} team={home} />
+      <span> vs </span>
+      <Team winner={winner} onClick={onTeamClick} team={away} />
+    </Item>
+  )
+}
 
-    return (
-      <List.Item>
-        <span className={homeClass} onClick={() => onTeamClick(home, id)}>
-          {home}
-        </span>
-        <span> vs </span>
-        <span className={awayClass} onClick={() => onTeamClick(away, id)}>
-          {away}
-        </span>
-      </List.Item>
-    )
+function Team({ team, winner, onClick }) {
+  const type = team === winner && 'success'
+  const strong = team === winner
+
+  function onConfirm() {
+    onClick(team)
   }
 
-  return <List bordered dataSource={matches} renderItem={renderItem} />
+  return (
+    <Popconfirm
+      title={`¿Enviar voto para ${team}?`}
+      description="El voto no puede ser cambiado"
+      onConfirm={onConfirm}
+    >
+      <a>
+        <Text type={type} strong={strong}>
+          {team}
+        </Text>
+      </a>
+    </Popconfirm>
+  )
 }
