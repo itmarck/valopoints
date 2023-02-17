@@ -21,6 +21,21 @@ export async function createVote(team, matchId) {
     return
   }
 
+  const { error, data } = await supabase
+    .from('vote')
+    .select()
+    .eq('user_id', user.id)
+
+  if (error) {
+    throw new Error('Algo salió mal')
+  }
+
+  const matchIds = data.map((vote) => vote.match_id)
+
+  if (matchIds.includes(matchId)) {
+    throw new Error('Ya tienes un voto en este partido')
+  }
+
   await supabase.from('vote').insert({
     user_id: user.id,
     user_name: user.name,

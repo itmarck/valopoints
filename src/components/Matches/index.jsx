@@ -16,13 +16,21 @@ export function Matches({ matches }) {
 
 function MatchItem({ id, home, away, winner }) {
   async function onTeamClick(team) {
-    await createVote(team, id)
+    try {
+      await createVote(team, id)
 
-    notification.open({
-      type: 'success',
-      message: 'Voto enviado',
-      description: `Has votado por ${team}`,
-    })
+      notification.open({
+        type: 'success',
+        message: 'Voto enviado',
+        description: `Has votado por ${team}`,
+      })
+    } catch (error) {
+      notification.open({
+        type: 'error',
+        message: 'Error',
+        description: error.message,
+      })
+    }
   }
 
   return (
