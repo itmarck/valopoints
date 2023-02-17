@@ -1,0 +1,8 @@
+.team {
+  cursor: pointer;
+}
+
+.winner {
+  color: green;
+  font-weight: bold;
+}
